@@ -20,8 +20,8 @@ unsigned int ShiftRight(unsigned int value, int positions);
 
 unsigned int CreateBitMask(int start, int end);
 
-void ToBinaryString(unsigned int value, char* output);
+void ToBinaryString(unsigned int value);
 
-void ToHexString(unsigned int value, char* output);
+void ToHexString(unsigned int value);
 
 #endif

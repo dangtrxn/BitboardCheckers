@@ -146,7 +146,7 @@ int IsLegalMove(unsigned int* p1Board, unsigned int* p2Board, unsigned int* p1Ki
     
     //If rowDisplacement = 2, check capture move
     //If rowDisplacement = 1, check normal move
-    //Else, invalid move
+    //Every other rowDisplacement is an invalid move
 
     //Handle capture moves
     if(abs(rowDisplacement) == 2){
@@ -169,7 +169,7 @@ int IsLegalMove(unsigned int* p1Board, unsigned int* p2Board, unsigned int* p1Ki
                     for(int j = 0; j < (isKing ? 4 : 2); j++){
                         IsLegalMove(p1Board, p2Board, p1KingBoard, p2KingBoard, end, end+jumpMoveSet[j], turn);
                     }
-                    return 2; //Return 1 to indicate a valid capture move was made
+                    return 2; //Return 2 to indicate a valid capture move(s) was made
                 }
             }
         }
@@ -196,14 +196,11 @@ int IsLegalMove(unsigned int* p1Board, unsigned int* p2Board, unsigned int* p1Ki
     return 0;
 }
 
-void PrintPlayerBoard(unsigned int board) { 
-    //Print a player's individual piece board
-    for(int i = 7; i >= 0; i--){
-        for (int j = 0; j < 4; j++) {
-            printf("%d ", CheckBit(board, i * 4 + j));
-        }
-        printf("\n");
-    }
+void PrintBoard(unsigned int* board) {
+    for (int i = 0; i < 32; i++) {
+        printf("%c", (board[i / 8] & (1 << (i % 8))) ? '1' : '0'); 
+        if ((i + 1) % 4 == 0) printf("\n"); 
+    } 
 }
 
 void PrintGameBoard(unsigned int p1Board, unsigned int p2Board, unsigned int p1KingBoard,unsigned int p2KingBoard) { 
@@ -246,7 +243,7 @@ void PrintGameBoard(unsigned int p1Board, unsigned int p2Board, unsigned int p1K
 }
 
 int CountPieces(unsigned int pawnBoard, unsigned int kingBoard) {
-    //Counts the players pieces
+    //Method used to count a players pieces
     int count = 0;
     
     //Loop through bitboards, increment count where a piece is
@@ -262,84 +259,62 @@ void UpdateGameState(unsigned int* blackBoard, unsigned int* blackKingBoard, uns
      int blackPieces = 12;
      int whitePieces = 12;
      int start, end;
+     char hexString[9];
 
-     while(blackPieces > 0 || whitePieces > 0){
+     while(blackPieces > 0 && whitePieces > 0){
         //Start by printing the game board and piece count
         PrintGameBoard(*blackBoard, *whiteBoard, *blackKingBoard, *whiteKingBoard);
-        printf("Black Pieces Left: %d\n", blackPieces);
-        printf("White Pieces Left: %d\n\n", whitePieces);
+        printf("Black:\n  -Pieces: %d\n  -Binary: ", blackPieces);
+        PrintBinary(*blackBoard);
+        ToHexString(*blackBoard);
+        printf("  -Hex: %s\n", hexString);
+        printf("White:\n  -Pieces: %d\n  -Binary: ", whitePieces);
+        PrintBinary(*whiteBoard);
+        ToHexString(*whiteBoard);
+        printf("  -Hex: %s\n", hexString);
 
-        //Black turn
+
         if(turn%2 == BLACK){
-            //Ask user for start and end positions
-            printf("Black Turn:\n");
-            printf("Enter the start position: (Enter -1 to forfeit)");
-            scanf("%d", &start);
-            if(start == -1){
-                whitePieces = 0;
-                break;
-            }
-            printf("Enter the end position: ");
-            scanf("%d", &end);
-
-            //Try move
-            int legalMove = IsLegalMove(blackBoard, whiteBoard, blackKingBoard, whiteKingBoard, start, end, turn);
-            printf("legal move: %d\n", legalMove);
-
-            //Further steps depending on return value of IsLegalMove()
-            if(legalMove == 1){ 
-                //Piece is moved successfully
-            }
-            else if(legalMove == 2){ 
-                //Capture move is made successfully
-                whitePieces = CountPieces(*whiteBoard, *whiteKingBoard);
-            }
-            else{ 
-                //Move is invalid
-                while(legalMove == 0){
-                    printf("Invalid move! Please try again.\n");
-                    printf("Enter the start position: ");
-                    scanf("%d", &start);
-                    printf("Enter the end position: ");
-                    scanf("%d", &end);
-                    legalMove = IsLegalMove(blackBoard, whiteBoard, blackKingBoard, whiteKingBoard, start, end, turn);
-                }
-            }
+            printf("\nBlack Turn:\n");
         }
-        //white turn
         else{
-            //Ask user for start and end positions
-            printf("White Turn: \n");
-            printf("Enter the start position: (Enter -1 to forfeit)");
-            scanf("%d", &start);
-            if(start == -1){
-                whitePieces = 0;
-                break;
-            }
-            printf("Enter the end position: ");
-            scanf("%d", &end);
+            printf("\nWhite Turn: \n");
+        }
+        //Ask user for start and end positions
+        printf("Enter the start position (Enter -1 to forfeit): ");
+        scanf("%d", &start);
+        if(start == -1){
+            whitePieces = 0;
+            break;
+        }
+        printf("Enter the end position: ");
+        scanf("%d", &end);
 
-            //Try move
-            int legalMove = IsLegalMove(whiteBoard, blackBoard, whiteKingBoard, blackKingBoard, start, end, turn);
+        //Try move
+        int legalMove = IsLegalMove(turn%2 == BLACK ? blackBoard : whiteBoard, turn%2 == BLACK ? whiteBoard : blackBoard, turn%2 == BLACK ? blackKingBoard : whiteKingBoard, turn%2 == BLACK ? whiteKingBoard : blackKingBoard, start, end, turn);
 
-            //Further steps depending on return value of IsLegalMove()
-            if(legalMove == 1){
-                //Piece is moved successfully
-            }
-            else if(legalMove == 2){
-                //Capture move is made successfully
-                blackPieces = CountPieces(*blackBoard, *blackKingBoard);
-            }
-            else{
-                //Move is invalid
-                while(legalMove == 0){
-                    printf("Invalid move! Please try again.\n");
-                    printf("Enter the start position: ");
-                    scanf("%d", &start);
-                    printf("Enter the end position: ");
-                    scanf("%d", &end);
-                    legalMove = IsLegalMove(whiteBoard, blackBoard, whiteKingBoard, blackKingBoard, start, end, turn);
-                }
+        //Further steps depending on return value of IsLegalMove()
+        if(legalMove == 1){ 
+            //Piece is moved successfully
+        }
+        else if(legalMove == 2){ 
+            //Capture move is made successfully
+            blackPieces = CountPieces(*blackBoard, *blackKingBoard);
+            whitePieces = CountPieces(*whiteBoard, *whiteKingBoard);
+        }
+        else{ 
+            //Move is invalid
+            while(legalMove == 0){
+                printf("Invalid move! Please try again.\n");
+                printf("Enter the start position (Enter -1 to forfeit): ");
+                scanf("%d", &start);
+                if(start == -1){
+                    whitePieces = 0;
+                    break;
+                }       
+                printf("Enter the end position: ");
+                scanf("%d", &end);
+                legalMove = IsLegalMove(turn%2 == BLACK ? blackBoard : whiteBoard, turn%2 == BLACK ? whiteBoard : blackBoard, turn%2 == BLACK ? blackKingBoard : whiteKingBoard, turn%2 == BLACK ? whiteKingBoard : blackKingBoard, start, end, turn);
             }
         }
         turn++;
@@ -352,4 +327,5 @@ void UpdateGameState(unsigned int* blackBoard, unsigned int* blackKingBoard, uns
     if(whitePieces == 0){
         printf("Black has won the game!\n");
     }
+    PrintGameBoard(*blackBoard, *whiteBoard, *blackKingBoard, *whiteKingBoard);
 }

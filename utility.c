@@ -44,13 +44,13 @@ unsigned int CreateBitMask(int start, int end){
     return ((1 << (end - start + 1)) - 1) << start;
 }
 
-void ToBinaryString(unsigned int value, char* output){
-    for(int i = 31; i >= 0; i--){
-        output[31-i] = ((value >> i) & 1) ? '1' : '0';
+void ToBinaryString(unsigned int value, char* output) {
+     for (int i = 31; i >= 0; i--) {
+         output[31-i] = ((value >> i) & 1) ? '1' : '0'; 
     }
-    output[32] = '\0';
+     output[32] = '\0'; 
 }
 
-void ToHexString(unsigned int value, char* output){
-    sprintf(output, "%08x", value);
+void ToHexString(unsigned int value, char* output) {
+     sprintf(output, "%08X", value); 
 }

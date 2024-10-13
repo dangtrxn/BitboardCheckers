@@ -6,7 +6,6 @@
 int main(){
     unsigned int blackBoard, blackKingBoard = 0; //Black
     unsigned int whiteBoard, whiteKingBoard = 0; //White
-    char black[32], blackKing[32], white[32], whiteKing[32];
     int playButton = 1;
     
     printf("Bitboard Checkers:\n------------------\n");
