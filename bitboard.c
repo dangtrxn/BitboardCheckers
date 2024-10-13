@@ -54,7 +54,7 @@ void CapturePiece(unsigned int* board, int position) {
 int IsLegalMove(unsigned int* p1Board, unsigned int* p2Board, unsigned int* p1KingBoard, unsigned int* p2KingBoard, int start, int end, int turn) {
 
     //Check if start/end position is in range of the board (0-31)
-    if(start < 0 || start > BOARD_SIZE || < 0 || end > BOARD_SIZE) return 0;
+    if(start < 0 || start > BOARD_SIZE || end < 0 || end > BOARD_SIZE) return 0;
     //Check if start position has a piece
     if(!(CheckBit(*p1Board,start) | CheckBit(*p1KingBoard, start))) return 0;
     //Check if end position is blocked by either player
