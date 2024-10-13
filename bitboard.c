@@ -38,7 +38,7 @@ void MovePiece(unsigned int* board, int start, int end) {
     *board = SetBit(*board, end);
 }
 
-void promoteKing(unsigned int* pawnBoard, unsigned int* kingBoard, int position){
+void PromoteKing(unsigned int* pawnBoard, unsigned int* kingBoard, int position){
     //Helper method to promote a piece to a king
     //Clears piece from player's pawn board
     *pawnBoard = ClearBit(*pawnBoard, position);
@@ -163,7 +163,7 @@ int IsLegalMove(unsigned int* p1Board, unsigned int* p2Board, unsigned int* p1Ki
                     MovePiece(isKing ? p1KingBoard : p1Board, start, end);
                     //Promote to king if necessary
                     if(!isKing && ((isBlack && end > 27) || (!isBlack && end < 4))){
-                        promoteKing(p1Board, p1KingBoard, end);
+                        PromoteKing(p1Board, p1KingBoard, end);
                     }
                     //Recursively check for possible consecutive jump capture moves
                     for(int j = 0; j < (isKing ? 4 : 2); j++){
@@ -184,7 +184,7 @@ int IsLegalMove(unsigned int* p1Board, unsigned int* p2Board, unsigned int* p1Ki
                     MovePiece(isKing ? p1KingBoard : p1Board, start, end);
                     //Promote to king if necessary
                     if (!isKing && ((isBlack && end > 27) || (!isBlack && end < 4))) {
-                        promoteKing(p1Board, p1KingBoard, end);
+                        PromoteKing(p1Board, p1KingBoard, end);
                     }
                     return 1; //Return 1 to indicate a valid move was made
             }
@@ -266,11 +266,11 @@ void UpdateGameState(unsigned int* blackBoard, unsigned int* blackKingBoard, uns
         PrintGameBoard(*blackBoard, *whiteBoard, *blackKingBoard, *whiteKingBoard);
         printf("Black:\n  -Pieces: %d\n  -Binary: ", blackPieces);
         PrintBinary(*blackBoard);
-        ToHexString(*blackBoard);
+        ToHexString(*blackBoard, hexString);
         printf("  -Hex: %s\n", hexString);
         printf("White:\n  -Pieces: %d\n  -Binary: ", whitePieces);
         PrintBinary(*whiteBoard);
-        ToHexString(*whiteBoard);
+        ToHexString(*whiteBoard, hexString);
         printf("  -Hex: %s\n", hexString);
 
 
