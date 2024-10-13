@@ -16,10 +16,6 @@ int main(){
         UpdateGameState(&blackBoard, &blackKingBoard, &whiteBoard, &whiteKingBoard);
         printf("Do you want to play again? (Enter 0 or 1)\n0: Exit Game\n1: Play Again\n");
         scanf("%d",&playButton);
-        while(playButton != 0 || playButton != 1){
-            printf("Invalid Option! 0: Exit Game\n1: Play Again\n");
-            scanf("%d",&playButton);
-        }
     }while(playButton != 0);
     
     return 0;
